@@ -10,7 +10,7 @@ class Encoder:
         self.x = 10
 
     @staticmethod
-    def to_json(args: str) -> str:
+    def to_json(args: list) -> str:
         encoded_data = "{\n\t"
         for arg in args:
             key, val = Encoder._key_value_split(arg)
@@ -18,6 +18,17 @@ class Encoder:
 
         encoded_data = encoded_data + "\n}"
         return encoded_data 
+
+    def to_array(args: list) -> str:
+        encoded_data = '['
+        for index, arg in enumerate(args):
+            encoded_data = encoded_data + str(arg)
+            if index != len(args) - 1:
+                encoded_data = encoded_data + ', '
+
+        encoded_data = encoded_data + ']'
+
+        return encoded_data
 
     @staticmethod
     def _key_value_split(key_value_pair: str) -> str:
