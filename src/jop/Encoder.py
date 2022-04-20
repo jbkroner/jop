@@ -19,6 +19,7 @@ class Encoder:
         encoded_data = encoded_data + "\n}"
         return encoded_data 
 
+    @staticmethod
     def to_array(args: list) -> str:
         encoded_data = '['
         for index, arg in enumerate(args):

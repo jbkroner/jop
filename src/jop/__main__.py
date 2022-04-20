@@ -2,7 +2,17 @@ import sys
 from Encoder import Encoder
 
 def main(args):
-    print(Encoder.to_json(args[1:]))
+    # encode as array
+    if '-a' in args:
+
+        # remove the flag
+        args.remove('-a')
+        # 
+        print(Encoder.to_array(args[1:]))
+
+    # encode as json
+    else:
+        print(Encoder.to_json(args[1:]))
 
 
 if __name__ == '__main__':
