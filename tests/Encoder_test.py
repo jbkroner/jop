@@ -99,6 +99,182 @@ class to_array_test(unittest.TestCase):
             expected_result
         )
 
+class add_double_quote_test(unittest.TestCase):
+    CASES = [
+        ['test', "\"test\""],
+        ['they\'re', "\"they're\""],
+        ["they're", "\"they're\""],
+        ["they are", "\"they are\""],
+    ]
+
+    def test_all_cases(self):
+        for case in self.CASES:
+            self.assertEqual(
+                Encoder._add_double_quote(case[0]), 
+                case[1]
+            )
+
+class is_double_quoted_test(unittest.TestCase):
+    CASES = [
+        ['', False],
+        [' ', False],
+        ['  ', False],
+        ['"', False],
+        ['""', False],
+        ['abc', False],
+        ['\"abc\"', True]
+    ]
+
+    def test_all_cases(self):
+        for case in self.CASES:
+            self.assertEqual(
+                Encoder._is_double_quoted(case[0]), 
+                case[1]
+            )
+
+class _is_string(unittest.TestCase):
+    SWITCH_MODE_FALSE_CASES = [
+        ['1', False],
+        # ['1.0', False],
+        # ['true', False],
+        # ['false', False],
+        # ['test', True],
+        # ['test', True],
+        # ['testTrue', True],
+        # ['test1234', True],
+        # ['test1234.1234', True],
+    ]
+
+
+    def test_switch_mode_false_000(self):
+        input = '1'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_001(self):
+        input = '1.0'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_002(self):
+        input = 'true'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_003(self):
+        input = 'false'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_004(self):
+        input = 'null'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_005(self):
+        input = 'a'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_006(self):
+        input = 'a1'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_false_007(self):
+        input = 'atrue'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=False), 
+            expected
+        )
+
+    def test_switch_mode_true_000(self):
+        input = '1'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_001(self):
+        input = '1.0'
+        expected = False
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_002(self):
+        input = 'true'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_003(self):
+        input = 'false'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_004(self):
+        input = 'null'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_005(self):
+        input = 'a'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_006(self):
+        input = 'a1'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+    def test_switch_mode_true_007(self):
+        input = 'atrue'
+        expected = True
+        self.assertEqual(
+            Encoder._is_string(input, switch=True), 
+            expected
+        )
+
+
 
 if __name__ == '__main__':
     unittest.main()
