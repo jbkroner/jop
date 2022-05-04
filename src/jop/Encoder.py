@@ -1,11 +1,14 @@
 import re
+
+
 class Encoder:
     """
     Encoding input into a variety of output formats
 
     All IO should be contained in __main__.py!!
     """
-    DELINIATOR = '='
+
+    DELINIATOR = "="
 
     def __init__(self) -> None:
         self.x = 10
@@ -23,40 +26,42 @@ class Encoder:
             # TODO - add switch mode support to to_json
             # TODO - type coercion on bools
             # TODO - nested objects
-            if Encoder._is_string(val, switch=False) and not Encoder._is_double_quoted(val):
+            if Encoder._is_string(val, switch=False) and not Encoder._is_double_quoted(
+                val
+            ):
                 val = Encoder._add_double_quote(val)
 
-            encoded_data = encoded_data + f'{key} : {val}' + "\n\t"
+            encoded_data = encoded_data + f"{key} : {val}" + "\n\t"
 
         encoded_data = encoded_data + "\n}"
-        return encoded_data 
+        return encoded_data
 
     @staticmethod
     def to_array(args: list) -> str:
-        # TODO pass in quotes? maybe fix through type coercion. original implementation does not deal with this at all.  
-        encoded_data = '['
+        # TODO pass in quotes? maybe fix through type coercion. original implementation does not deal with this at all.
+        encoded_data = "["
         for index, arg in enumerate(args):
-            if arg[0] == '"' and arg[0]  == '"':
+            if arg[0] == '"' and arg[0] == '"':
                 arg = Encoder._add_double_quote(arg)
             encoded_data = encoded_data + str(arg)
             if index != len(args) - 1:
-                encoded_data = encoded_data + ', '
+                encoded_data = encoded_data + ", "
 
-        encoded_data = encoded_data + ']'
+        encoded_data = encoded_data + "]"
 
         return encoded_data
 
     @staticmethod
     def _key_value_split(key_value_pair: str) -> str:
         if Encoder.DELINIATOR in key_value_pair:
-            kv_list= key_value_pair.split(Encoder.DELINIATOR)
+            kv_list = key_value_pair.split(Encoder.DELINIATOR)
             return kv_list[0], kv_list[1]
 
     @staticmethod
     def _add_double_quote(input: str) -> str:
         # quotify a string
-        
-        escaped_double_quote = '\"'
+
+        escaped_double_quote = '"'
 
         if input[0] != escaped_double_quote:
             input = escaped_double_quote + input
@@ -83,12 +88,12 @@ class Encoder:
 
         # check if it's a float
         # https://stackoverflow.com/questions/736043/checking-if-a-string-can-be-converted-to-float-in-python
-        if not re.match(r'^-?\d+(?:\.\d+)$', input) is None:
+        if not re.match(r"^-?\d+(?:\.\d+)$", input) is None:
             has_digits = True
 
         # check for bools / null if not in switch mode
         if not switch:
-            if input in ['true', 'false', 'null']: 
+            if input in ["true", "false", "null"]:
                 has_bool = True
 
         if has_digits or has_bool:
