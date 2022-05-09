@@ -38,8 +38,6 @@ class Encoder:
 
             node = JsonNode(key=key, val=val)
 
-            print(node.key)
-
             encoded_data.append(node)
 
         return Encoder._stringify_encoded_data(encoded_data=encoded_data, pretty=False)
