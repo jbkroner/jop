@@ -1,4 +1,7 @@
 import re
+from typing import Tuple
+
+from JsonNode import JsonNode
 
 
 class Encoder:
@@ -15,12 +18,14 @@ class Encoder:
 
     @staticmethod
     def to_json(args: list) -> str:
-        encoded_data = "{\n\t"
+        encoded_data = []
         for arg in args:
             key, val = Encoder._key_value_split(arg)
 
             # keys must be enclosed in quotes
             key = Encoder._add_double_quote(key)
+
+            # TODO fix this
 
             # if the val is not an integer, float, or bool then it must be quotified
             # TODO - add switch mode support to to_json
@@ -31,10 +36,26 @@ class Encoder:
             ):
                 val = Encoder._add_double_quote(val)
 
-            encoded_data = encoded_data + f"{key} : {val}" + "\n\t"
+            node = JsonNode(key=key, val=val)
 
-        encoded_data = encoded_data + "\n}"
-        return encoded_data
+            print(node.key)
+
+            encoded_data.append(node)
+
+        return Encoder._stringify_encoded_data(encoded_data=encoded_data, pretty=False)
+
+    @staticmethod
+    def _stringify_encoded_data(encoded_data: list[JsonNode], pretty: bool) -> str:
+        if not pretty:
+            output = "{"
+            for kvpair in encoded_data:
+                if kvpair != encoded_data[0]:
+                    output = output + ', '  + str(kvpair)
+                else:
+                    output = output + str(kvpair)
+            output = output + '}'
+            return output
+
 
     @staticmethod
     def to_array(args: list) -> str:
