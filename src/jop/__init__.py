@@ -1,8 +1,10 @@
 import sys
-from Encoder import Encoder
+from jop.Encoder import Encoder
 
 
-def main(args):
+def main():
+    args = sys.argv    
+
     # encode as array
     if "-a" in args:
 

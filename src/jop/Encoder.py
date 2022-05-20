@@ -1,7 +1,7 @@
 import re
-from typing import Tuple
-
-from JsonNode import JsonNode
+from jop.JsonNode import JsonNode, KVPair
+from jop.JsonCase import JsonCase
+from jop.Maybe import Maybe, Error, Just
 
 
 class Encoder:
@@ -16,31 +16,82 @@ class Encoder:
     def __init__(self) -> None:
         self.x = 10
 
+    @staticmethod    
+    def _eval_case(args: str) -> JsonCase:
+
+        # if key=val, then case 0
+        pass
+        # unless key=$(), then we have a nested case
+
+
     @staticmethod
     def to_json(args: list) -> str:
-        encoded_data = []
+        root_node = JsonNode()
+
         for arg in args:
+            # case 1: k=v            
+
+            # split the pair
             key, val = Encoder._key_value_split(arg)
 
             # keys must be enclosed in quotes
             key = Encoder._add_double_quote(key)
 
-            # TODO fix this
-
             # if the val is not an integer, float, or bool then it must be quotified
-            # TODO - add switch mode support to to_json
-            # TODO - type coercion on bools
-            # TODO - nested objects
             if Encoder._is_string(val, switch=False) and not Encoder._is_double_quoted(
                 val
             ):
                 val = Encoder._add_double_quote(val)
 
-            node = JsonNode(key=key, val=val)
+            kvpair = KVPair(key, val)
+            root_node.add_data(kvpair)
 
-            encoded_data.append(node)
 
-        return Encoder._stringify_encoded_data(encoded_data=encoded_data, pretty=False)
+        return str(root_node)
+
+    @staticmethod
+    def node_builder(node: JsonNode, args: list) -> JsonNode:
+        if args == []:
+            return node
+
+        grouping_operator = '#'
+
+        # pop the arg
+        arg = args.pop(0)
+
+        # case 0 k=v
+        if '=' in arg and grouping_operator not in arg:
+            key, val = Encoder._key_value_split(arg)
+            key = Encoder._add_double_quote(key)
+            if Encoder._is_string(val, switch=False) and not Encoder._is_double_quoted(
+                val
+            ):
+                val = Encoder._add_double_quote(val)
+
+            node.add_data(KVPair(key, val))
+            return Encoder.node_builder(node, args)
+
+        # catch all, we had an error
+        return None
+        
+
+    @staticmethod
+    def _update_json_node(node: JsonNode, arg) -> JsonNode:
+        # eval an arg and update a json node as needed
+
+        grouping_operator = '#'
+
+        # case 0 k=v
+        if '=' in arg and grouping_operator not in arg:
+            key, val = Encoder._key_value_split(arg)
+            node.add_data(KVPair(key, val))
+            return node
+
+        # case 1 k=-k=v-
+        if grouping_operator in arg:
+            key, nested_object = Encoder._key_value_split(arg)
+            node.add_data(KVPair(key, 'nested object here!'))
+            return node
 
     @staticmethod
     def _stringify_encoded_data(encoded_data: list[JsonNode], pretty: bool) -> str:
@@ -98,10 +149,22 @@ class Encoder:
 
     @staticmethod
     def _is_string(input: str, switch: bool) -> bool:
+        # str -> bool -> bool
         # return true if:
         # is not only integers (0-9)
         # is not a float
         # is not a bool (t, f, True, False)
+
+        # Maybe Example:
+        # getting values
+        # if type(input) == Error:
+        #     return Error(error_message=f'error in example function :->: {input.error_message}')
+        # if type(switch) == Error:
+        #     return Error(error_message=f'error in example function :->: {input.error_message}')
+        # input = input.val
+        # switch = switch.val
+
+
         has_digits = input.isdigit()
         has_bool = False
 
@@ -118,3 +181,20 @@ class Encoder:
         if has_digits or has_bool:
             return False
         return True
+
+    @staticmethod
+    def _example_function(val: Maybe) -> Maybe:
+        """
+        example of using the Maybe type
+        """
+
+        # pattern match
+        if type(val) == Error:
+            return Error(error_message=f'error in example function :->: {val.error_message}')
+
+        if type(val) == Just:
+            val = val.val
+
+            # do some stuff with val            
+
+            return Just(val)
